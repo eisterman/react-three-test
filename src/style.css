@@ -1,1 +1,23 @@
 @import "tailwindcss";
+@plugin "daisyui";
+
+@layer base {
+    /* Custom global resets for full-height, full-width web app */
+    html, body {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    #root {
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;  /* Adjust to 'auto' if needed */
+        background: transparent;
+    }
+
+    /* Global box-sizing inheritance to prevent accidental overflows */
+    *, *::before, *::after {
+        box-sizing: inherit;
+    }
+}
