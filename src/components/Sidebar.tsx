@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useRef } from 'react';
-import { PlaceDialog } from '@/components/PlaceDialog.tsx';
+import PlaceDialog from '@/components/PlaceDialog.tsx';
 
 export function Sidebar({ className }: { className?: string }) {
   const placeDialog = useRef<HTMLDialogElement>(null!);

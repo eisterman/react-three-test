@@ -1,11 +1,13 @@
 import { type FormEvent, type RefObject, useState } from 'react';
 import type { Rectangle } from '@/types.ts';
 import { MapSelector } from '@/components/MapSelector.tsx';
+import { useMapStore } from '@/stores/useMapStore.ts';
 
-export function PlaceDialog({ ref }: { ref: RefObject<HTMLDialogElement> }) {
+function PlaceDialog({ ref }: { ref: RefObject<HTMLDialogElement> }) {
   const [address, setAddress] = useState('');
   const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [rectangle, setRectangle] = useState<Rectangle | null>(null);
+  const setMapRectangle = useMapStore((state) => state.setMapRectangle);
 
   async function searchSubmit(e: FormEvent) {
     e.preventDefault();
@@ -28,7 +30,7 @@ export function PlaceDialog({ ref }: { ref: RefObject<HTMLDialogElement> }) {
   function onSave() {
     console.log('SAVING');
     if (rectangle) {
-      alert(`N ${rectangle.north} S ${rectangle.south} E ${rectangle.east} W ${rectangle.west}`);
+      setMapRectangle(rectangle);
     }
     ref.current.close();
   }
@@ -73,3 +75,5 @@ export function PlaceDialog({ ref }: { ref: RefObject<HTMLDialogElement> }) {
     </dialog>
   );
 }
+
+export default PlaceDialog;
