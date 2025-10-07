@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Grid, OrbitControls, TransformControls } from '@react-three/drei';
 import { type Mesh, Texture, TextureLoader } from 'three';
-import { useMapStore } from '@/stores/useMapStore.ts';
+import { useProjectStore } from '@/stores/useProjectStore.ts';
 import type { Rectangle } from '@/types.ts';
 
 async function fetchMapObjUrl(l: Rectangle) {
@@ -18,7 +18,7 @@ async function fetchMapObjUrl(l: Rectangle) {
 }
 
 function MapBase() {
-  const mapRectangle = useMapStore((state) => state.mapRectangle);
+  const mapRectangle = useProjectStore((state) => state.mapRectangle);
   const [texture, setTexture] = useState<Texture | null>(null);
 
   useEffect(() => {
