@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
 import type { Rectangle, Cube } from '@/types.ts';
 import { v4 as uuidv4 } from 'uuid';
+import * as _ from 'lodash';
 
 // Remember that you CANNOT MODIFY IN-PLACE state during a set
 export const useProjectStore = create(
@@ -17,6 +18,12 @@ export const useProjectStore = create(
         }),
       addCube: (cube: Cube) =>
         set((state) => {
+          if (
+            state.cubes.find(
+              (v) => _.isEqual(v.position, cube.position) && v.rotation.equals(cube.rotation),
+            )
+          )
+            return {};
           return { cubes: [...state.cubes, { ...cube, uid: uuidv4() }] };
         }),
       removeCube: (cubeUid: string) =>
