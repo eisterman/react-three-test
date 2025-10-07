@@ -1,5 +1,10 @@
+import { createFileRoute } from '@tanstack/react-router';
 import ThreeCanvas from '@/components/ThreeCanvas.tsx';
 import { Sidebar } from '@/components/Sidebar.tsx';
+
+export const Route = createFileRoute('/')({
+  component: Index,
+});
 
 function Navbar() {
   return (
@@ -9,7 +14,7 @@ function Navbar() {
   );
 }
 
-function App() {
+function Index() {
   return (
     <div className={'flex flex-col h-full w-full'}>
       <Navbar></Navbar>
@@ -22,5 +27,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

@@ -7,11 +7,15 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier",
+    "check": "prettier --write . && eslint --fix"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.6",
     "@react-three/fiber": "^9.3.0",
+    "@tanstack/react-router": "^1.132.47",
+    "@tanstack/react-router-devtools": "^1.132.47",
     "clsx": "^2.1.1",
     "leaflet": "^1.9.4",
     "react": "^19.2.0",
@@ -23,6 +27,8 @@
   "devDependencies": {
     "@eslint/js": "^9.37.0",
     "@tailwindcss/vite": "^4.1.14",
+    "@tanstack/eslint-plugin-router": "^1.132.31",
+    "@tanstack/router-plugin": "^1.132.47",
     "@types/leaflet": "^1.9.20",
     "@types/node": "^24.7.0",
     "@types/react": "^19.2.0",
@@ -42,5 +48,5 @@
     "vite": "^7.1.9",
     "vite-tsconfig-paths": "^5.1.4"
   },
-  "packageManager": "pnpm@10.18.0"
+  "packageManager": "pnpm@10.18.1"
 }
