@@ -69,13 +69,8 @@ function RotatingCube({ cube }: { cube: Cube & { uid: string } }) {
           }}
         />
       )}
-      <group
-        ref={myGroup}
-        position={cube.position}
-        rotation={cube.rotation}
-        onContextMenu={rotateMode}
-      >
-        <mesh>
+      <group ref={myGroup} position={cube.position} rotation={cube.rotation}>
+        <mesh onContextMenu={rotateMode}>
           <boxGeometry args={[1, 1, 1]} />
           <meshPhongMaterial color={0x00ff00} />
         </mesh>
