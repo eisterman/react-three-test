@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { Grid, OrbitControls, TransformControls } from '@react-three/drei';
-import { type Mesh, Texture, TextureLoader } from 'three';
+import { BoxGeometry, type Group, Texture, TextureLoader } from 'three';
 import { useProjectStore } from '@/stores/useProjectStore.ts';
-import type { Rectangle } from '@/types.ts';
+import type { Cube, Rectangle } from '@/types.ts';
 
 async function fetchMapObjUrl(l: Rectangle) {
   const mapStyle = 'satellite-v9'; // or 'satellite-streets-v12'
@@ -39,13 +39,11 @@ function MapBase() {
     );
 }
 
-function RotatingCube({ position }: { position: [number, number, number] }) {
+function RotatingCube({ cube }: { cube: Cube & { uid: string } }) {
   const [mode, setMode] = useState<'translate' | 'rotate' | undefined>(undefined);
-  const myMesh = useRef<Mesh>(null!);
-  useFrame(() => {
-    myMesh.current.rotation.x += 0.01;
-    myMesh.current.rotation.y += 0.01;
-  });
+  const myGroup = useRef<Group>(null!);
+  const updateCube = useProjectStore((state) => state.updateCube);
+
   function rotateMode() {
     if (mode == 'translate') {
       setMode('rotate');
@@ -57,21 +55,49 @@ function RotatingCube({ position }: { position: [number, number, number] }) {
   }
   return (
     <>
-      {mode !== undefined && <TransformControls object={myMesh} mode={mode} />}
-      <mesh ref={myMesh} position={position} onContextMenu={rotateMode}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshPhongMaterial color={0x00ff00} flatShading={true} />
-      </mesh>
+      {mode !== undefined && (
+        <TransformControls
+          object={myGroup}
+          mode={mode}
+          onObjectChange={() => {
+            if (myGroup.current) {
+              updateCube(cube.uid, {
+                position: myGroup.current.position.toArray(),
+                rotation: myGroup.current.rotation,
+              });
+            }
+          }}
+        />
+      )}
+      <group
+        ref={myGroup}
+        position={cube.position}
+        rotation={cube.rotation}
+        onContextMenu={rotateMode}
+      >
+        <mesh>
+          <boxGeometry args={[1, 1, 1]} />
+          <meshPhongMaterial color={0x00ff00} />
+        </mesh>
+        <lineSegments>
+          <edgesGeometry args={[new BoxGeometry(1, 1, 1)]} />
+          <lineBasicMaterial color='black' />
+        </lineSegments>
+      </group>
     </>
   );
 }
 
 export default function ThreeCanvas() {
+  const cubes = useProjectStore((state) => state.cubes);
   return (
     <Canvas camera={{ position: [3, 3, 3], fov: 75 }}>
-      <directionalLight position={[5, 5, 5]} />
-      <RotatingCube position={[0, 0.5, 0]} />
+      {cubes.map((cube) => (
+        <RotatingCube cube={cube} key={cube.uid} />
+      ))}
       <MapBase />
+      <directionalLight position={[5, 5, 5]} />
+      <ambientLight intensity={0.3} />
       <Grid cellColor={'white'} sectionColor={'red'} infiniteGrid />
       <OrbitControls makeDefault />
     </Canvas>

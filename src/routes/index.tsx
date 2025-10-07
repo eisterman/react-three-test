@@ -35,10 +35,10 @@ function Index() {
     <div className={'flex flex-col h-full w-full'}>
       <Navbar></Navbar>
       <div className={'h-full w-full flex flex-row'}>
-        <div className={'flex-4'}>
+        <div className={'w-4/5'}>
           <ThreeCanvas></ThreeCanvas>
         </div>
-        <Sidebar className={'flex-1'}></Sidebar>
+        <Sidebar className={'w-1/5'}></Sidebar>
       </div>
     </div>
   );
