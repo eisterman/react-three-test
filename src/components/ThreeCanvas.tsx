@@ -40,7 +40,7 @@ function MapBase() {
 }
 
 function RotatingCube({ cube }: { cube: Cube & { uid: string } }) {
-  const [mode, setMode] = useState<'translate' | 'rotate' | undefined>(undefined);
+  const [mode, setMode] = useState<'translate' | 'rotate' | null>(null);
   const myGroup = useRef<Group>(null!);
   const updateCube = useProjectStore((state) => state.updateCube);
 
@@ -48,17 +48,17 @@ function RotatingCube({ cube }: { cube: Cube & { uid: string } }) {
     if (mode == 'translate') {
       setMode('rotate');
     } else if (mode == 'rotate') {
-      setMode(undefined);
+      setMode(null);
     } else {
       setMode('translate');
     }
   }
   return (
     <>
-      {mode !== undefined && (
+      {mode !== null && (
         <TransformControls
           object={myGroup}
-          mode={mode}
+          mode={mode ?? undefined}
           onObjectChange={() => {
             if (myGroup.current) {
               updateCube(cube.uid, {
