@@ -10,11 +10,11 @@ function ProjInList({ uid }: { uid: string }) {
   const backendGetByUid = useBackendStore((state) => state.getByUid);
   const deleteProject = useBackendStore((state) => state.deleteProject);
   return (
-    <li className='flex flex-row gap-2 items-center justify-between'>
+    <li className='flex flex-row gap-2 items-center justify-between my-1 py-1 border '>
       <p>{uid}</p>
-      <div>
+      <div className='mx-2'>
         <button
-          className='btn btn-sm btn-info'
+          className='btn btn-sm btn-info w-full'
           onClick={() => {
             const proj = backendGetByUid(uid);
             setProject(proj, uid);
@@ -22,11 +22,20 @@ function ProjInList({ uid }: { uid: string }) {
         >
           Open
         </button>
-        <button className='btn btn-sm btn-error' onClick={() => deleteProject(uid)}>
+        <button className='btn btn-sm btn-error w-full' onClick={() => deleteProject(uid)}>
           Delete
         </button>
       </div>
     </li>
+  );
+}
+
+function NewProjectBtn() {
+  const resetProject = useProjectStore((state) => state.reset);
+  return (
+    <button className='btn' onClick={resetProject}>
+      New
+    </button>
   );
 }
 
@@ -40,7 +49,7 @@ function SaveProjectBtn() {
   }
   return (
     <button className='btn' onClick={doSave}>
-      Save as new project
+      Save as new
     </button>
   );
 }
@@ -72,6 +81,7 @@ function TestArea() {
       <p>TEST AREA</p>
       <p>Current UID: {remoteUid ?? 'null'}</p>
       <div>
+        <NewProjectBtn />
         <SaveProjectBtn />
         <OverwriteProjectBtn />
       </div>

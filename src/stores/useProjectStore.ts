@@ -13,7 +13,8 @@ export const useProjectStore = create(
       cubes: [] as (Cube & { uid: string })[],
       remoteUid: null as string | null,
     },
-    (set, get) => ({
+    (set, get, store) => ({
+      reset: () => set(store.getInitialState()),
       getProject: (): Project & { remoteUid: string | null } => {
         const state = get();
         return { mapRectangle: state.mapRectangle, cubes: state.cubes, remoteUid: state.remoteUid };

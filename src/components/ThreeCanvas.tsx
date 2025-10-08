@@ -22,13 +22,16 @@ function MapBase() {
   const [texture, setTexture] = useState<Texture | null>(null);
 
   useEffect(() => {
-    if (mapRectangle === null) return;
-    fetchMapObjUrl(mapRectangle)
-      .then((url) => {
-        const loader = new TextureLoader();
-        setTexture(loader.load(url));
-      })
-      .catch((err) => console.error(err));
+    if (mapRectangle === null) {
+      setTexture(null);
+    } else {
+      fetchMapObjUrl(mapRectangle)
+        .then((url) => {
+          const loader = new TextureLoader();
+          setTexture(loader.load(url));
+        })
+        .catch((err) => console.error(err));
+    }
   }, [mapRectangle]);
 
   return texture === null ? null : (
