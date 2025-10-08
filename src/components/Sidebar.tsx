@@ -3,6 +3,89 @@ import { useRef } from 'react';
 import PlaceDialog from '@/components/PlaceDialog.tsx';
 import { useProjectStore } from '@/stores/useProjectStore.ts';
 import { Euler } from 'three';
+import useBackendStore, { type Project } from '@/stores/useBackendStore.ts';
+
+function ProjInList({ uid }: { uid: string }) {
+  const setProject = useProjectStore((state) => state.setProject);
+  const backendGetByUid = useBackendStore((state) => state.getByUid);
+  const deleteProject = useBackendStore((state) => state.deleteProject);
+  return (
+    <li className='flex flex-row gap-2 items-center justify-between'>
+      <p>{uid}</p>
+      <div>
+        <button
+          className='btn btn-sm btn-info'
+          onClick={() => {
+            const proj = backendGetByUid(uid);
+            setProject(proj, uid);
+          }}
+        >
+          Open
+        </button>
+        <button className='btn btn-sm btn-error' onClick={() => deleteProject(uid)}>
+          Delete
+        </button>
+      </div>
+    </li>
+  );
+}
+
+function SaveProjectBtn() {
+  const saveNewProject = useBackendStore((state) => state.saveNewProject);
+  const getProject = useProjectStore((state) => state.getProject);
+  function doSave() {
+    const project: Project = getProject();
+    const uid = saveNewProject(project);
+    console.log(`New Project with uid ${uid}`);
+  }
+  return (
+    <button className='btn' onClick={doSave}>
+      Save as new project
+    </button>
+  );
+}
+
+function OverwriteProjectBtn() {
+  const remoteUid = useProjectStore((state) => state.remoteUid);
+  const overwriteProject = useBackendStore((state) => state.overwriteProject);
+  const getProject = useProjectStore((state) => state.getProject);
+  return (
+    <button
+      className='btn'
+      disabled={remoteUid === null}
+      onClick={() => {
+        if (remoteUid === null) return;
+        const proj = getProject();
+        overwriteProject(remoteUid, proj);
+      }}
+    >
+      Overwrite
+    </button>
+  );
+}
+
+function TestArea() {
+  const remoteUid = useProjectStore((state) => state.remoteUid);
+  const projectsUids = useBackendStore((state) => state.projects);
+  return (
+    <div className='border-red-500 border-2'>
+      <p>TEST AREA</p>
+      <p>Current UID: {remoteUid ?? 'null'}</p>
+      <div>
+        <SaveProjectBtn />
+        <OverwriteProjectBtn />
+      </div>
+      <div className='border-green-500 border-2'>
+        <p>Projects</p>
+        <ul>
+          {Object.keys(projectsUids).map((uid) => (
+            <ProjInList uid={uid} />
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
 
 export function Sidebar({ className }: { className?: string }) {
   const placeDialog = useRef<HTMLDialogElement>(null!);
@@ -38,6 +121,7 @@ export function Sidebar({ className }: { className?: string }) {
           Delete Cube
         </button>
       </div>
+      <TestArea />
     </div>
   );
 }

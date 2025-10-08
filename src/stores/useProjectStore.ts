@@ -2,13 +2,28 @@ import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
 import type { Rectangle, Cube } from '@/types.ts';
 import { v4 as uuidv4 } from 'uuid';
-import * as _ from 'lodash';
+import _ from 'lodash';
+import type { Project } from '@/stores/useBackendStore.ts';
 
 // Remember that you CANNOT MODIFY IN-PLACE state during a set
 export const useProjectStore = create(
   combine(
-    { mapRectangle: null as Rectangle | null, cubes: [] as (Cube & { uid: string })[] },
-    (set) => ({
+    {
+      mapRectangle: null as Rectangle | null,
+      cubes: [] as (Cube & { uid: string })[],
+      remoteUid: null as string | null,
+    },
+    (set, get) => ({
+      getProject: (): Project & { remoteUid: string | null } => {
+        const state = get();
+        return { mapRectangle: state.mapRectangle, cubes: state.cubes, remoteUid: state.remoteUid };
+      },
+      setProject: (project: Project, remoteUid: string | null) =>
+        set(() => ({
+          mapRectangle: project.mapRectangle,
+          cubes: project.cubes,
+          remoteUid,
+        })),
       setMapRectangle: (mapRectangle: Rectangle | null) => set(() => ({ mapRectangle })),
       updateCube: (cubeUid: string, cube: Cube) =>
         set((state) => {
