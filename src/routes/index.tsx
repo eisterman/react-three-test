@@ -35,21 +35,21 @@ function Navbar() {
 function Index() {
   const [sidebarShow, setSidebarShow] = useState<boolean>(true);
   const sidebarMode = sidebarShow ? 'visible' : 'hidden';
-  const canvasW = sidebarShow ? 'w-4/5' : 'w-full';
-  const sideW = sidebarShow ? 'w-1/5' : '';
+  const canvasW = sidebarShow ? 'h-1/2 md:w-4/5' : 'h-full md:w-full';
+  const sideW = sidebarShow ? 'h-1/2 md:w-1/5' : '';
   return (
     <div className={'flex flex-col h-full w-full'}>
       <Navbar></Navbar>
-      <div className={'h-full w-full flex flex-row'}>
+      <div className={'h-full w-full flex flex-col md:flex-row'}>
         <div className={canvasW}>
           <ThreeCanvas></ThreeCanvas>
         </div>
         <div className={clsx('relative', sideW)}>
           <Activity mode={sidebarMode}>
-            <Sidebar></Sidebar>
+            <Sidebar className='h-auto'></Sidebar>
           </Activity>
           <button
-            className={'btn btn-primary absolute -left-10 top-4 z-10'}
+            className={'btn btn-primary absolute -top-10 left-10 md:-left-10 md:top-4 z-10'}
             onClick={() => setSidebarShow((p) => !p)}
           >
             S
