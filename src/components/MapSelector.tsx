@@ -120,17 +120,30 @@ const DrawingModeControl = ({
   return null;
 };
 
+// This component allows a MapContainer to update his center reactively
+function PositionUpdater({ location }: { location: Location }) {
+  const map = useMap();
+
+  useEffect(() => {
+    map.setView([location.lat, location.lon]);
+  }, [map, location]);
+
+  return null;
+}
+
 export function MapSelector({ location, onRectangleSelect }: MapSelectorProps) {
   const [isDrawingMode, setIsDrawingMode] = useState(false);
 
   return (
     <div className={clsx('h-[400px] w-[400px]', isDrawingMode && 'select-none')}>
+      {/* MapContainer is NOT reactive on prop changes because life is very sad */}
       <MapContainer
         className={'h-full w-full'}
         center={[location.lat, location.lon]}
         zoom={13}
-        dragging={!isDrawingMode} // Enable dragging only when NOT in drawing mode
+        dragging={!isDrawingMode} // Enable dragging only when NOT in drawing mode, probably this do nothing
       >
+        <PositionUpdater location={location} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
