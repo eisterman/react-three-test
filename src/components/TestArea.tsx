@@ -1,6 +1,6 @@
 import { useProjectStore } from '@/stores/useProjectStore.ts';
 import useBackendStore from '@/stores/useBackendStore.ts';
-import type { Project } from '@/types.ts';
+import { isSavedproject, type Project } from '@/types.ts';
 
 function ProjInList({ uid }: { uid: string }) {
   const setProject = useProjectStore((state) => state.setProject);
@@ -14,7 +14,7 @@ function ProjInList({ uid }: { uid: string }) {
           className='btn btn-sm btn-info w-full'
           onClick={() => {
             const proj = backendGetByUid(uid);
-            setProject(proj, uid);
+            setProject(proj);
           }}
         >
           Open
@@ -60,9 +60,9 @@ function OverwriteProjectBtn() {
       className='btn'
       disabled={remoteUid === null}
       onClick={() => {
-        if (remoteUid === null) return;
         const proj = getProject();
-        overwriteProject(remoteUid, proj);
+        if (!isSavedproject(proj)) return;
+        overwriteProject(proj);
       }}
     >
       Overwrite

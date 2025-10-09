@@ -18,6 +18,13 @@ export type Cube = {
 };
 
 export type Project = {
+  remoteUid: string | null;
   mapRectangle: Rectangle | null;
   cubes: (Cube & { uid: string })[];
 };
+
+export type SavedProject = Project & { remoteUid: string };
+
+export function isSavedproject(project: Project): project is SavedProject {
+  return project.remoteUid !== null;
+}

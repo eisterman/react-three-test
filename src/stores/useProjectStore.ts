@@ -8,21 +8,21 @@ import _ from 'lodash';
 export const useProjectStore = create(
   combine(
     {
+      remoteUid: null as string | null,
       mapRectangle: null as Rectangle | null,
       cubes: [] as (Cube & { uid: string })[],
-      remoteUid: null as string | null,
     },
     (set, get, store) => ({
       reset: () => set(store.getInitialState()),
-      getProject: (): Project & { remoteUid: string | null } => {
+      getProject: (): Project => {
         const state = get();
         return { mapRectangle: state.mapRectangle, cubes: state.cubes, remoteUid: state.remoteUid };
       },
-      setProject: (project: Project, remoteUid: string | null) =>
+      setProject: (project: Project) =>
         set(() => ({
           mapRectangle: project.mapRectangle,
           cubes: project.cubes,
-          remoteUid,
+          remoteUid: project.remoteUid,
         })),
       setMapRectangle: (mapRectangle: Rectangle | null) => set(() => ({ mapRectangle })),
       updateCube: (cubeUid: string, cube: Cube) =>
