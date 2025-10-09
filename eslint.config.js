@@ -10,10 +10,13 @@ export default defineConfig([
   globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
+    plugins: {
+      'react-hooks': reactHooks,
+    },
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,
-      reactHooks.configs['recommended'],
+      'react-hooks/recommended',
       reactRefresh.configs.vite,
     ],
     languageOptions: {
