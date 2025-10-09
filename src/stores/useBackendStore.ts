@@ -1,12 +1,7 @@
 import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
-import type { Cube, Rectangle } from '@/types.ts';
+import type { Project } from '@/types.ts';
 import { v4 as uuidv4 } from 'uuid';
-
-export type Project = {
-  mapRectangle: Rectangle | null;
-  cubes: (Cube & { uid: string })[];
-};
 
 export default create(
   combine(

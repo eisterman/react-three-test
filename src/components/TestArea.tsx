@@ -1,5 +1,6 @@
 import { useProjectStore } from '@/stores/useProjectStore.ts';
-import useBackendStore, { type Project } from '@/stores/useBackendStore.ts';
+import useBackendStore from '@/stores/useBackendStore.ts';
+import type { Project } from '@/types.ts';
 
 function ProjInList({ uid }: { uid: string }) {
   const setProject = useProjectStore((state) => state.setProject);

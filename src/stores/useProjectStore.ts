@@ -1,9 +1,8 @@
 import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
-import type { Rectangle, Cube } from '@/types.ts';
+import type { Rectangle, Cube, Project } from '@/types.ts';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
-import type { Project } from '@/stores/useBackendStore.ts';
 
 // Remember that you CANNOT MODIFY IN-PLACE state during a set
 export const useProjectStore = create(

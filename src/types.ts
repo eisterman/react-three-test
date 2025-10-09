@@ -16,3 +16,8 @@ export type Cube = {
   position: [x: number, y: number, z: number];
   rotation: Euler;
 };
+
+export type Project = {
+  mapRectangle: Rectangle | null;
+  cubes: (Cube & { uid: string })[];
+};
