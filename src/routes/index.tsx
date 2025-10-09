@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import ThreeCanvas from '@/components/ThreeCanvas.tsx';
 import { Sidebar } from '@/components/Sidebar.tsx';
+import { Activity, useState } from 'react';
+import clsx from 'clsx';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -31,14 +33,28 @@ function Navbar() {
 }
 
 function Index() {
+  const [sidebarShow, setSidebarShow] = useState<boolean>(true);
+  const sidebarMode = sidebarShow ? 'visible' : 'hidden';
+  const canvasW = sidebarShow ? 'w-4/5' : 'w-full';
+  const sideW = sidebarShow ? 'w-1/5' : '';
   return (
     <div className={'flex flex-col h-full w-full'}>
       <Navbar></Navbar>
       <div className={'h-full w-full flex flex-row'}>
-        <div className={'w-4/5'}>
+        <div className={canvasW}>
           <ThreeCanvas></ThreeCanvas>
         </div>
-        <Sidebar className={'w-1/5'}></Sidebar>
+        <div className={clsx('relative', sideW)}>
+          <Activity mode={sidebarMode}>
+            <Sidebar></Sidebar>
+          </Activity>
+          <button
+            className={'btn btn-primary absolute -left-10 top-4 z-10'}
+            onClick={() => setSidebarShow((p) => !p)}
+          >
+            S
+          </button>
+        </div>
       </div>
     </div>
   );
