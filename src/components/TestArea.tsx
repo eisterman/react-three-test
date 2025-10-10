@@ -86,7 +86,7 @@ export function TestArea() {
         <p>Projects</p>
         <ul>
           {Object.keys(projectsUids).map((uid) => (
-            <ProjInList uid={uid} />
+            <ProjInList uid={uid} key={uid} />
           ))}
         </ul>
       </div>

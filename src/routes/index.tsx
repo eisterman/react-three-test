@@ -35,8 +35,9 @@ function Navbar() {
 function Index() {
   const [sidebarShow, setSidebarShow] = useState<boolean>(true);
   const sidebarMode = sidebarShow ? 'visible' : 'hidden';
-  const canvasW = sidebarShow ? 'h-1/2 md:w-4/5' : 'h-full md:w-full';
-  const sideW = sidebarShow ? 'h-1/2 md:w-1/5' : '';
+  const canvasW = sidebarShow ? 'h-1/2 md:h-auto md:w-4/5' : 'h-full md:h-auto md:w-full';
+  const sideW = sidebarShow ? 'h-1/2 md:h-auto md:w-1/5' : '';
+  // FIXME: MOBILE: Quando il sidebar content overflowa lo "spessore" del bottone viene sottratto all'altezza della sidebar
   return (
     <div className={'flex flex-col h-full w-full'}>
       <Navbar></Navbar>
@@ -46,10 +47,12 @@ function Index() {
         </div>
         <div className={clsx('relative', sideW)}>
           <Activity mode={sidebarMode}>
-            <Sidebar className='h-auto'></Sidebar>
+            <Sidebar className='h-full overflow-y-auto'></Sidebar>
           </Activity>
           <button
-            className={'btn btn-primary absolute -top-10 left-10 md:-left-10 md:top-4 z-10'}
+            className={
+              'btn btn-primary absolute -top-10 right-10 md:right-auto md:-left-10 md:top-4 z-10'
+            }
             onClick={() => setSidebarShow((p) => !p)}
           >
             S
