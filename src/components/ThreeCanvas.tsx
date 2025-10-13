@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Grid, OrbitControls, TransformControls } from '@react-three/drei';
-import { BoxGeometry, type Group, Texture, TextureLoader } from 'three';
+import { Gltf, Grid, OrbitControls, TransformControls } from '@react-three/drei';
+import { BoxGeometry, Euler, type Group, Texture, TextureLoader } from 'three';
 import { useProjectStore } from '@/stores/useProjectStore.ts';
-import type { Cube, Rectangle } from '@/types.ts';
+import type { Cube, Rectangle, TObject } from '@/types.ts';
+import tossoEasyUrl from '@/assets/models/tossoeasy-sp.glb?url';
 
 async function fetchMapObjUrl(l: Rectangle) {
   const mapStyle = 'satellite-v9'; // or 'satellite-streets-v12'
@@ -86,13 +87,62 @@ function RotatingCube({ cube }: { cube: Cube & { uid: string } }) {
   );
 }
 
+function TossoTest({ tobj }: { tobj: TObject & { uid: string } }) {
+  const [mode, setMode] = useState<'translate' | 'rotate' | null>(null);
+  const myGroup = useRef<Group>(null!);
+  function rotateMode() {
+    if (mode == 'translate') {
+      setMode('rotate');
+    } else if (mode == 'rotate') {
+      setMode(null);
+    } else {
+      setMode('translate');
+    }
+  }
+  return (
+    <>
+      {mode !== null && (
+        <TransformControls
+          object={myGroup}
+          mode={mode ?? undefined}
+          showX={mode !== 'rotate'}
+          showY={mode === 'rotate'}
+          showZ={mode !== 'rotate'}
+          // onObjectChange={() => {
+          //   if (myGroup.current) {
+          //     updateCube(cube.uid, {
+          //       position: myGroup.current.position.toArray(),
+          //       rotation: myGroup.current.rotation,
+          //     });
+          //   }
+          // }}
+        />
+      )}
+      <Gltf
+        ref={myGroup}
+        src={tossoEasyUrl}
+        onContextMenu={rotateMode}
+        position={tobj.position}
+        rotation={tobj.rotation}
+      ></Gltf>
+    </>
+  );
+}
+
 export default function ThreeCanvas() {
   const cubes = useProjectStore((state) => state.cubes);
+  const test: TObject & { uid: string } = {
+    objType: 'tossoeasy',
+    position: [0, 0, 0],
+    rotation: new Euler(),
+    uid: '123',
+  };
   return (
     <Canvas camera={{ position: [3, 3, 3], fov: 75 }}>
       {cubes.map((cube) => (
         <RotatingCube cube={cube} key={cube.uid} />
       ))}
+      <TossoTest tobj={test} />
       <MapBase />
       <directionalLight position={[5, 5, 5]} />
       <ambientLight intensity={0.3} />

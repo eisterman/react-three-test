@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
-import type { Rectangle, Cube, Project } from '@/types.ts';
+import type { Rectangle, Cube, Project, TObject } from '@/types.ts';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 
@@ -11,6 +11,7 @@ export const useProjectStore = create(
       remoteUid: null as string | null,
       mapRectangle: null as Rectangle | null,
       cubes: [] as (Cube & { uid: string })[],
+      tobjs: [] as (TObject & { uid: string })[],
     },
     (set, get, store) => ({
       reset: () => set(store.getInitialState()),
@@ -25,6 +26,27 @@ export const useProjectStore = create(
           remoteUid: project.remoteUid,
         })),
       setMapRectangle: (mapRectangle: Rectangle | null) => set(() => ({ mapRectangle })),
+      // TObjects
+      addTObject: (tobj: TObject) => {
+        const uid = uuidv4();
+        set((state) => {
+          if (
+            state.tobjs.find(
+              (v) => _.isEqual(v.position, tobj.position) && v.rotation.equals(tobj.rotation),
+            )
+          )
+            return {};
+          return { tobjs: [...state.tobjs, { ...tobj, uid: uid }] };
+        });
+        return uid;
+      },
+      updateTObject: (uid: string, tobj: TObject) =>
+        set((state) => ({
+          tobjs: state.tobjs.map((v) => (v.uid === uid ? { ...tobj, uid: uid } : v)),
+        })),
+      removeTObject: (uid: string) =>
+        set((state) => ({ tobjs: state.tobjs.filter((v) => v.uid !== uid) })),
+      // Cube
       updateCube: (cubeUid: string, cube: Cube) =>
         set((state) => {
           return {

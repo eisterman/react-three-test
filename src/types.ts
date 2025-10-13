@@ -17,6 +17,14 @@ export type Cube = {
   rotation: Euler;
 };
 
+export type TObjType = 'tossoeasy' | 'tossoeco';
+
+export type TObject = {
+  objType: TObjType;
+  position: [x: number, y: number, z: number];
+  rotation: Euler;
+};
+
 export type Project = {
   remoteUid: string | null;
   mapRectangle: Rectangle | null;
