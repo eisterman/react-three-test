@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Gltf, Grid, OrbitControls, TransformControls } from '@react-three/drei';
-import { BoxGeometry, Euler, type Group, Texture, TextureLoader } from 'three';
+import { BoxGeometry, type Group, Texture, TextureLoader } from 'three';
 import { useProjectStore } from '@/stores/useProjectStore.ts';
-import type { Cube, Rectangle, TObject } from '@/types.ts';
+import type { Cube, Rectangle, TObject, TObjType } from '@/types.ts';
 import tossoEasyUrl from '@/assets/models/tossoeasy-sp.glb?url';
+import tossoEcoUrl from '@/assets/models/tosso_eco_S-2x1.glb?url';
 
 async function fetchMapObjUrl(l: Rectangle) {
   const mapStyle = 'satellite-v9'; // or 'satellite-streets-v12'
@@ -87,9 +88,18 @@ function RotatingCube({ cube }: { cube: Cube & { uid: string } }) {
   );
 }
 
-function TossoTest({ tobj }: { tobj: TObject & { uid: string } }) {
+function getModelUrl(tot: TObjType): string {
+  if (tot === 'tossoeasy') return tossoEasyUrl;
+  else if (tot === 'tossoeco') return tossoEcoUrl;
+  else throw new Error('Invalid TObjType');
+}
+
+function TossoModelObject({ tobj }: { tobj: TObject & { uid: string } }) {
   const [mode, setMode] = useState<'translate' | 'rotate' | null>(null);
   const myGroup = useRef<Group>(null!);
+  const modelUrl = getModelUrl(tobj.objType);
+  const updateTObject = useProjectStore((state) => state.updateTObject);
+
   function rotateMode() {
     if (mode == 'translate') {
       setMode('rotate');
@@ -99,6 +109,7 @@ function TossoTest({ tobj }: { tobj: TObject & { uid: string } }) {
       setMode('translate');
     }
   }
+
   return (
     <>
       {mode !== null && (
@@ -108,19 +119,20 @@ function TossoTest({ tobj }: { tobj: TObject & { uid: string } }) {
           showX={mode !== 'rotate'}
           showY={mode === 'rotate'}
           showZ={mode !== 'rotate'}
-          // onObjectChange={() => {
-          //   if (myGroup.current) {
-          //     updateCube(cube.uid, {
-          //       position: myGroup.current.position.toArray(),
-          //       rotation: myGroup.current.rotation,
-          //     });
-          //   }
-          // }}
+          onMouseUp={() => {
+            if (myGroup.current) {
+              updateTObject(tobj.uid, {
+                position: myGroup.current.position.toArray(),
+                rotation: myGroup.current.rotation,
+                objType: tobj.objType,
+              });
+            }
+          }}
         />
       )}
       <Gltf
         ref={myGroup}
-        src={tossoEasyUrl}
+        src={modelUrl}
         onContextMenu={rotateMode}
         position={tobj.position}
         rotation={tobj.rotation}
@@ -129,20 +141,25 @@ function TossoTest({ tobj }: { tobj: TObject & { uid: string } }) {
   );
 }
 
+function TossoModels() {
+  const tossos = useProjectStore((state) => state.tobjs);
+  return (
+    <>
+      {tossos.map((tobj) => (
+        <TossoModelObject tobj={tobj} key={tobj.uid} />
+      ))}
+    </>
+  );
+}
+
 export default function ThreeCanvas() {
   const cubes = useProjectStore((state) => state.cubes);
-  const test: TObject & { uid: string } = {
-    objType: 'tossoeasy',
-    position: [0, 0, 0],
-    rotation: new Euler(),
-    uid: '123',
-  };
   return (
     <Canvas camera={{ position: [3, 3, 3], fov: 75 }}>
       {cubes.map((cube) => (
         <RotatingCube cube={cube} key={cube.uid} />
       ))}
-      <TossoTest tobj={test} />
+      <TossoModels />
       <MapBase />
       <directionalLight position={[5, 5, 5]} />
       <ambientLight intensity={0.3} />

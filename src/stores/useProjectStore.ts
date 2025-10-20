@@ -30,9 +30,13 @@ export const useProjectStore = create(
       addTObject: (tobj: TObject) => {
         const uid = uuidv4();
         set((state) => {
+          // Skip creation if already exists an exactly identical object
           if (
             state.tobjs.find(
-              (v) => _.isEqual(v.position, tobj.position) && v.rotation.equals(tobj.rotation),
+              (v) =>
+                _.isEqual(v.position, tobj.position) &&
+                v.rotation.equals(tobj.rotation) &&
+                v.objType === tobj.objType,
             )
           )
             return {};
