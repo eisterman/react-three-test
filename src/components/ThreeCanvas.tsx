@@ -40,6 +40,9 @@ function MapBase() {
   const [texture, setTexture] = useState<Texture | null>(null);
   const maxMeters = mapRectangle && calculateMaxMeters(mapRectangle);
 
+  // For an unknown reason, this code when remade with `use()` do an infinite rerendering loop
+  //   Probably, there is a strange interaction with React Three Fiber that causes a full remount,
+  //   or some problem with React Compiler or zustand or a mix of the three...
   useEffect(() => {
     if (mapRectangle === null) {
       setTexture(null);
