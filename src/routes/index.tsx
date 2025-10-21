@@ -42,12 +42,12 @@ function Index() {
     <div className={'flex flex-col h-full w-full'}>
       <Navbar></Navbar>
       <div className={'h-full w-full flex flex-col md:flex-row'}>
-        <div className={canvasW}>
+        <div className={clsx('relative z-0', canvasW)}>
           <ThreeCanvas></ThreeCanvas>
         </div>
-        <div className={clsx('relative', sideW)}>
+        <div className={clsx('relative z-10', sideW)}>
           <Activity mode={sidebarMode}>
-            <Sidebar className='h-full overflow-y-auto'></Sidebar>
+            <Sidebar className='h-full'></Sidebar>
           </Activity>
           <button
             className={

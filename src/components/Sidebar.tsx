@@ -4,7 +4,7 @@ import PlaceDialog from '@/components/PlaceDialog.tsx';
 import { useProjectStore } from '@/stores/useProjectStore.ts';
 import { Euler } from 'three';
 import { TestArea } from '@/components/TestArea.tsx';
-import type { TObjType } from '@/types.ts';
+import type { TObject, TObjType } from '@/types.ts';
 
 function CreateTossoBtnDialog() {
   const formId = useId();
@@ -52,7 +52,7 @@ function CreateTossoBtnDialog() {
           </form>
           <div className='modal-action'>
             <button form={formId} type='submit' className={'btn'} disabled={modelState === 'empty'}>
-              Search
+              Create
             </button>
           </div>
         </div>
@@ -61,6 +61,34 @@ function CreateTossoBtnDialog() {
         </form>
       </dialog>
     </>
+  );
+}
+
+function DeleteTossoLink({ tobj }: { tobj: TObject & { uid: string } }) {
+  const position = `${tobj.position[0].toFixed(1)},${tobj.position[1].toFixed(1)},${tobj.position[2].toFixed(1)}`;
+  const removeTObject = useProjectStore((state) => state.removeTObject);
+  return (
+    <li>
+      <a onClick={() => removeTObject(tobj.uid)}>
+        {tobj.objType}:{position}
+      </a>
+    </li>
+  );
+}
+
+function DeleteTossoDropdown() {
+  const tobjs = useProjectStore((state) => state.tobjs);
+
+  // TODO: Replace with shadcn
+  return (
+    <details className='dropdown dropdown-end'>
+      <summary className='btn btn-error'>Delete Tosso</summary>
+      <ul className='menu dropdown-content bg-base-100 rounded-box w-52 p-2 shadow-sm z-1'>
+        {tobjs.map((t) => (
+          <DeleteTossoLink tobj={t} key={t.uid} />
+        ))}
+      </ul>
+    </details>
   );
 }
 
@@ -99,16 +127,7 @@ export function Sidebar({ className }: { className?: string }) {
       </div>
       <div className={'flex flex-row flex-wrap items-center justify-center gap-2 my-2 border py-2'}>
         <CreateTossoBtnDialog />
-        <button
-          className='btn btn-error'
-          onClick={() => {
-            if (cubes.length > 0) {
-              removeCube(cubes[0].uid);
-            }
-          }}
-        >
-          Delete Tosso (TODO)
-        </button>
+        <DeleteTossoDropdown />
       </div>
       <PlaceDialog ref={placeDialog} />
       <TestArea />

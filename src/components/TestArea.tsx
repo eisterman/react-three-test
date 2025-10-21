@@ -74,7 +74,7 @@ export function TestArea() {
   const remoteUid = useProjectStore((state) => state.remoteUid);
   const projectsUids = useBackendStore((state) => state.projects);
   return (
-    <div className='border-red-500 border-2'>
+    <div className='border-red-500 border-2 grow'>
       <p>TEST AREA</p>
       <p>Current UID: {remoteUid ?? 'null'}</p>
       <div>
@@ -82,7 +82,7 @@ export function TestArea() {
         <SaveProjectBtn />
         <OverwriteProjectBtn />
       </div>
-      <div className='border-green-500 border-2'>
+      <div className='border-green-500 border-2 overflow-y-auto'>
         <p>Projects</p>
         <ul>
           {Object.keys(projectsUids).map((uid) => (

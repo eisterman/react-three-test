@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Gltf, Grid, OrbitControls, TransformControls } from '@react-three/drei';
 import { BoxGeometry, type Group, Texture, TextureLoader } from 'three';
@@ -6,6 +6,11 @@ import { useProjectStore } from '@/stores/useProjectStore.ts';
 import type { Cube, Rectangle, TObject, TObjType } from '@/types.ts';
 import tossoEasyUrl from '@/assets/models/tossoeasy-sp.glb?url';
 import tossoEcoUrl from '@/assets/models/tosso_eco_S-2x1.glb?url';
+import CanvasLoading from '@/components/CanvasLoading.tsx';
+
+// Preload models to prevent strange re-rendering at a model load
+// useGLTF.preload(tossoEasyUrl);
+// useGLTF.preload(tossoEcoUrl);
 
 async function fetchMapObjUrl(l: Rectangle) {
   const mapStyle = 'satellite-v9'; // or 'satellite-streets-v12'
@@ -96,7 +101,7 @@ function getModelUrl(tot: TObjType): string {
 
 function TossoModelObject({ tobj }: { tobj: TObject & { uid: string } }) {
   const [mode, setMode] = useState<'translate' | 'rotate' | null>(null);
-  const myGroup = useRef<Group>(null!);
+  const myGroup = useRef<Group | null>(null!);
   const modelUrl = getModelUrl(tobj.objType);
   const updateTObject = useProjectStore((state) => state.updateTObject);
 
@@ -111,10 +116,10 @@ function TossoModelObject({ tobj }: { tobj: TObject & { uid: string } }) {
   }
 
   return (
-    <>
-      {mode !== null && (
+    <Suspense fallback={<CanvasLoading />}>
+      {myGroup.current !== null && mode !== null && (
         <TransformControls
-          object={myGroup}
+          object={myGroup.current}
           mode={mode ?? undefined}
           showX={mode !== 'rotate'}
           showY={mode === 'rotate'}
@@ -137,7 +142,7 @@ function TossoModelObject({ tobj }: { tobj: TObject & { uid: string } }) {
         position={tobj.position}
         rotation={tobj.rotation}
       ></Gltf>
-    </>
+    </Suspense>
   );
 }
 
@@ -156,15 +161,17 @@ export default function ThreeCanvas() {
   const cubes = useProjectStore((state) => state.cubes);
   return (
     <Canvas camera={{ position: [3, 3, 3], fov: 75 }}>
-      {cubes.map((cube) => (
-        <RotatingCube cube={cube} key={cube.uid} />
-      ))}
-      <TossoModels />
-      <MapBase />
-      <directionalLight position={[5, 5, 5]} />
-      <ambientLight intensity={0.3} />
-      <Grid cellColor={'white'} sectionColor={'red'} infiniteGrid />
-      <OrbitControls makeDefault />
+      <Suspense fallback={<CanvasLoading />}>
+        {cubes.map((cube) => (
+          <RotatingCube cube={cube} key={cube.uid} />
+        ))}
+        <TossoModels />
+        <MapBase />
+        <directionalLight position={[5, 5, 5]} />
+        <ambientLight intensity={0.3} />
+        <Grid cellColor={'white'} sectionColor={'red'} infiniteGrid />
+        <OrbitControls makeDefault />
+      </Suspense>
     </Canvas>
   );
 }
