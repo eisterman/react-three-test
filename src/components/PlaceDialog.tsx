@@ -7,12 +7,14 @@ function PlaceDialog({ ref }: { ref: RefObject<HTMLDialogElement> }) {
   const [address, setAddress] = useState('');
   const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [rectangle, setRectangle] = useState<Rectangle | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const setMapRectangle = useProjectStore((state) => state.setMapRectangle);
 
   async function searchSubmit(e: FormEvent) {
     e.preventDefault();
     if (!address) return;
     try {
+      setLoading(true);
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`,
       );
@@ -24,6 +26,8 @@ function PlaceDialog({ ref }: { ref: RefObject<HTMLDialogElement> }) {
       }
     } catch (error) {
       console.error('Geocoding error:', error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -60,7 +64,12 @@ function PlaceDialog({ ref }: { ref: RefObject<HTMLDialogElement> }) {
             onChange={(e) => setAddress(e.target.value)}
           />
           <button type='submit' className={'btn'} disabled={address === ''}>
-            Search
+            <label className={`swap ${loading && 'swap-active'}`}>
+              <div className='swap-on'>
+                <span className='loading loading-spinner loading-md'></span>
+              </div>
+              <div className='swap-off'>Search</div>
+            </label>
           </button>
         </form>
         <div className={'w-full flex flex-col items-center my-8'}>
