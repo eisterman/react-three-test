@@ -69,7 +69,7 @@ function RotatingCube({ cube }: { cube: Cube & { uid: string } }) {
         <TransformControls
           object={myGroup}
           mode={mode ?? undefined}
-          onObjectChange={() => {
+          onMouseUp={() => {
             if (myGroup.current) {
               updateCube(cube.uid, {
                 position: myGroup.current.position.toArray(),

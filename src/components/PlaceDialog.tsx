@@ -41,10 +41,16 @@ function PlaceDialog({ ref }: { ref: RefObject<HTMLDialogElement> }) {
           <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2'>✕</button>
         </form>
         <h3 className='font-bold text-lg'>Select Place</h3>
-        <p className='py-4'>
-          Insert an address, search it, drag the map where you want with the proper zoom, press the
-          green edit button, draw a rectangle and then confirm.
-        </p>
+        <div className='py-4'>
+          <p>
+            Insert an address, search it, drag the map where you want with the proper zoom, press
+            the green edit button, draw a rectangle and then confirm.
+          </p>
+          <p>
+            The loaded map will be squared and will include all the selected rectangle plus some
+            padding if needed.
+          </p>
+        </div>
         <form className={'flex flex-row gap-2 w-full'} onSubmit={searchSubmit}>
           <input
             type='text'
