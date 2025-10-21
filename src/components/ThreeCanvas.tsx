@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Gltf, Grid, OrbitControls, TransformControls } from '@react-three/drei';
+import { CameraControls, Gltf, Grid, TransformControls } from '@react-three/drei';
 import { BoxGeometry, type Group, Texture, TextureLoader } from 'three';
 import { useProjectStore } from '@/stores/useProjectStore.ts';
 import type { Cube, Rectangle, TObject, TObjType } from '@/types.ts';
@@ -170,7 +170,7 @@ export default function ThreeCanvas() {
         <directionalLight position={[5, 5, 5]} />
         <ambientLight intensity={0.3} />
         <Grid cellColor={'white'} sectionColor={'red'} infiniteGrid />
-        <OrbitControls makeDefault />
+        <CameraControls makeDefault />
       </Suspense>
     </Canvas>
   );
