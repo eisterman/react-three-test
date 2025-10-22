@@ -1,5 +1,5 @@
 {
-  "name": "react-three-test",
+  "name": "visual-tosso",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -45,6 +45,7 @@
     "eslint-plugin-react-refresh": "^0.4.23",
     "globals": "^16.4.0",
     "prettier": "^3.6.2",
+    "supabase": "^2.53.6",
     "tailwindcss": "^4.1.14",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.0",

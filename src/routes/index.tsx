@@ -12,7 +12,7 @@ function Navbar() {
   return (
     <div className='navbar bg-base-100 shadow-lg flex flex-row justify-between'>
       <div className='navbar-start'>
-        <a className='btn btn-ghost text-xl'>React Three.js Test</a>
+        <a className='btn btn-ghost text-xl'>Visual Tosso</a>
       </div>
       <div className='navbar-end'>
         <ul className='menu menu-horizontal bg-base-200 rounded-box'>
