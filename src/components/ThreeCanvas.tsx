@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, use, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { CameraControls, Gltf, Grid, TransformControls } from '@react-three/drei';
 import { BoxGeometry, type Group, Texture, TextureLoader } from 'three';
@@ -13,7 +13,7 @@ import L from 'leaflet';
 // useGLTF.preload(tossoEasyUrl);
 // useGLTF.preload(tossoEcoUrl);
 
-async function fetchMapObjUrl(l: Rectangle) {
+async function fetchMapTexture(l: Rectangle) {
   const mapStyle = 'satellite-v9'; // or 'satellite-streets-v12'
   // TODO Use Protected Token for live
   const accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -22,7 +22,9 @@ async function fetchMapObjUrl(l: Rectangle) {
   const resp = await fetch(url);
   if (!resp.ok) throw new Error('Failed to fetch image');
   const blob = await resp.blob();
-  return URL.createObjectURL(blob);
+  const resUrl = URL.createObjectURL(blob);
+  const loader = new TextureLoader();
+  return loader.loadAsync(resUrl);
 }
 
 function calculateMaxMeters(mapRectangle: Rectangle) {
@@ -35,36 +37,35 @@ function calculateMaxMeters(mapRectangle: Rectangle) {
   return Math.max(widthMeters, heightMeters);
 }
 
+function MapRender({
+  texturePromise,
+  sideMeters,
+}: {
+  texturePromise: Promise<Texture>;
+  sideMeters: number;
+}) {
+  const texture = use(texturePromise);
+  return (
+    <mesh position={[0, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      <planeGeometry args={[sideMeters, sideMeters]} />
+      <meshBasicMaterial map={texture} />
+    </mesh>
+  );
+}
+
+// For unknown reasons, I cannot do `use(fetchMapTexture())` with inline Promise because it triggers an infinite reload
 function MapBase() {
   const mapRectangle = useProjectStore((state) => state.mapRectangle);
-  const [texture, setTexture] = useState<Texture | null>(null);
+  const texturePromise: Promise<Texture> | null = mapRectangle && fetchMapTexture(mapRectangle);
   const maxMeters = mapRectangle && calculateMaxMeters(mapRectangle);
 
-  // For an unknown reason, this code when remade with `use()` do an infinite rerendering loop
-  //   Probably, there is a strange interaction with React Three Fiber that causes a full remount,
-  //   or some problem with React Compiler or zustand or a mix of the three...
-  useEffect(() => {
-    if (mapRectangle === null) {
-      setTexture(null);
-    } else {
-      setTexture(null);
-      fetchMapObjUrl(mapRectangle)
-        .then((url) => {
-          const loader = new TextureLoader();
-          setTexture(loader.load(url));
-        })
-        .catch((err) => console.error(err));
-    }
-  }, [mapRectangle]);
-
-  return texture === null ? null : (
-      maxMeters && (
-        <mesh position={[0, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[maxMeters, maxMeters]} />
-          <meshBasicMaterial map={texture} />
-        </mesh>
-      )
-    );
+  return (
+    <Suspense fallback={<CanvasLoading />}>
+      {texturePromise && maxMeters && (
+        <MapRender texturePromise={texturePromise} sideMeters={maxMeters} />
+      )}
+    </Suspense>
+  );
 }
 
 function MapGrid() {
@@ -185,17 +186,15 @@ export default function ThreeCanvas() {
   const cubes = useProjectStore((state) => state.cubes);
   return (
     <Canvas camera={{ position: [3, 3, 3], fov: 75 }}>
-      <Suspense fallback={<CanvasLoading />}>
-        {cubes.map((cube) => (
-          <RotatingCube cube={cube} key={cube.uid} />
-        ))}
-        <TossoModels />
-        <MapBase />
-        <directionalLight position={[5, 5, 5]} />
-        <ambientLight intensity={0.3} />
-        <MapGrid />
-        <CameraControls makeDefault />
-      </Suspense>
+      {cubes.map((cube) => (
+        <RotatingCube cube={cube} key={cube.uid} />
+      ))}
+      <TossoModels />
+      <MapBase />
+      <directionalLight position={[5, 5, 5]} />
+      <ambientLight intensity={0.3} />
+      <MapGrid />
+      <CameraControls makeDefault />
     </Canvas>
   );
 }
