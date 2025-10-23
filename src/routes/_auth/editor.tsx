@@ -4,7 +4,7 @@ import { Sidebar } from '@/components/Sidebar.tsx';
 import { Activity, useState } from 'react';
 import clsx from 'clsx';
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_auth/editor')({
   component: Index,
 });
 
