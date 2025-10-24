@@ -38,10 +38,12 @@ function Navbar() {
       </div>
       <div className='navbar-end'>
         <Button onClick={logout}>
-          <div className={cn('swap items-center justify-items-center', isLoading && 'swap-active')}>
+          <span
+            className={cn('swap items-center justify-items-center', isLoading && 'swap-active')}
+          >
             <span className='swap-off'>Logout</span>
             <span className='swap-on loading loading-spinner'></span>
-          </div>
+          </span>
         </Button>
       </div>
     </div>
