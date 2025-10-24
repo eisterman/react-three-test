@@ -1,9 +1,9 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
-import useAuthStore from '@/stores/useAuthStore.ts';
 
 export const Route = createFileRoute('/_auth')({
-  beforeLoad: () => {
-    if (!useAuthStore.getState().loggedIn) {
+  beforeLoad: async ({ context }) => {
+    const session = await context.supabase.auth.getSession();
+    if (session.data.session === null) {
       throw redirect({
         to: '/login',
         search: {
